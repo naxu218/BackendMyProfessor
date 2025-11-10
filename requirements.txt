@@ -1,5 +1,5 @@
-gunicorn
 asgiref
+gunicorn
 Django
 dj-database-url
 django-cors-headers
