@@ -1,5 +1,7 @@
 asgiref
+gunicorn
 Django
+dj-database-url
 django-cors-headers
 djangorestframework
 djangorestframework-simplejwt
@@ -7,4 +9,5 @@ PyJWT
 pytz
 sqlparse
 psycopg2-binary
+whitenoise
 python-dotenv
