@@ -1,0 +1,49 @@
+from rest_framework import serializers
+from .models import Facultad, Profesor, Universidad, CustomUser, Opinion
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class ProfesorSerializer(serializers.ModelSerializer):
+    promedio_calificacion = serializers.FloatField(read_only=True)
+    class Meta:
+        model = Profesor
+        fields = ["id", "nombre", "promedio_calificacion"]
+
+class FacultadSerializer(serializers.ModelSerializer):
+    profesores = ProfesorSerializer(many=True, read_only=True)
+    class Meta:
+        model = Facultad
+        fields = ["id", "nombre", "profesores"]
+
+class UniversidadSerializer(serializers.ModelSerializer):
+    facultades = FacultadSerializer(many=True, read_only=True)
+    class Meta:
+        model = Universidad
+        fields = ["id", "nombre", "pais", "ciudad", "facultades", "imagen"]
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    universidad = serializers.PrimaryKeyRelatedField(
+        queryset = Universidad.objects.all()
+    )
+    class Meta:
+        model = CustomUser
+        fields = ["id", "username", "password", "email", "universidad"]
+        extra_kwargs = {"password": {"write_only": True}}
+    
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(**validated_data)
+        return user
+
+class OpinionSerializer(serializers.ModelSerializer):
+    usuario = UsuarioSerializer(read_only=True)
+    profesor = ProfesorSerializer(read_only=True)
+    class Meta:
+        model = Opinion
+        fields = ["id", "usuario", "profesor", "calificacion", "comentario"]
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        token['universidad'] = user.universidad.id
+        return token
