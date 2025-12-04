@@ -6,7 +6,22 @@ class ProfesorSerializer(serializers.ModelSerializer):
     promedio_calificacion = serializers.FloatField(read_only=True)
     class Meta:
         model = Profesor
-        fields = ["id", "nombre", "promedio_calificacion"]
+        fields = ["id", "nombre", "facultad", "promedio_calificacion"]
+        extra_kwargs = {
+            "nombre" : {
+                "error_message" : {
+                    "unique" : "El profesor ya existe en esta facultad."
+                }
+            }
+        }
+    
+    def validate(self, data):
+        nombre = data.get("nombre")
+        facultad = data.get("facultad")
+
+        if Profesor.objects.filter(nombre=nombre, facultad=facultad).exists():
+            raise serializers.ValidationError({"nombre" : "Este profesor ya existe en esta facultad."})
+        return data
 
 class FacultadSerializer(serializers.ModelSerializer):
     profesores = ProfesorSerializer(many=True, read_only=True)
@@ -28,9 +43,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ["id", "username", "password", "email", "universidad"]
         extra_kwargs = {"password": {"write_only": True},
-                "username": {
-                    "error_messages": {
-                        "unique": "El nombre de usuario ya existe."
+            "username": {
+                "error_messages": {
+                    "unique": "El nombre de usuario ya existe."
                 }
             },
             "email": {
@@ -42,12 +57,12 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if CustomUser.objects.filter(username=value).exists():
-            raise serializers.ValidationError("El nombre de usuario ya existe.")
+            raise serializers.ValidationError({"username" : "El nombre de usuario ya existe."})
         return value
 
     def validate_email(self, value):
         if CustomUser.objects.filter(email=value).exists():
-            raise serializers.ValidationError("El correo ya está en uso.")
+            raise serializers.ValidationError({"email" : "El correo ya está en uso."})
         return value
     
     def create(self, validated_data):
