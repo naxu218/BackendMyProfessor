@@ -27,7 +27,18 @@ class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "username", "password", "email", "universidad"]
-        extra_kwargs = {"password": {"write_only": True}}
+        extra_kwargs = {"password": {"write_only": True},
+                "username": {
+                    "error_messages": {
+                        "unique": "El nombre de usuario ya existe."
+                }
+            },
+            "email": {
+                "error_messages": {
+                    "unique": "El correo ya está en uso."
+                }
+            }
+        }
 
     def validate_username(self, value):
         if CustomUser.objects.filter(username=value).exists():
