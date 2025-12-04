@@ -9,7 +9,7 @@ class ProfesorSerializer(serializers.ModelSerializer):
         fields = ["id", "nombre", "facultad", "promedio_calificacion"]
         extra_kwargs = {
             "nombre" : {
-                "error_message" : {
+                "error_messages" : {
                     "unique" : "El profesor ya existe en esta facultad."
                 }
             }
