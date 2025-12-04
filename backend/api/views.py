@@ -71,14 +71,18 @@ class ProfesorViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def create(self, request, universidad_id=None, facultad_id=None):
+    def create(self, request, *args, **kwargs):
         user = request.user
+        universidad_id = self.kwargs.get("universidad_id")
+        facultad_id = self.kwargs.get("facultad_id")
+
         facultad = get_object_or_404(Facultad, id=facultad_id, universidad_id=universidad_id)
         if user.universidad.id != int(universidad_id):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(facultad=facultad)
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CreateUserView(generics.CreateAPIView):
