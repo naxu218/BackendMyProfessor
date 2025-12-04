@@ -17,7 +17,7 @@ class ProfesorSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         nombre = data.get("nombre")
-        facultad = data.get("facultad")
+        facultad = self.context["view"].kwargs["facultad_id"]
 
         if Profesor.objects.filter(nombre=nombre, facultad=facultad).exists():
             raise serializers.ValidationError({"nombre" : "Este profesor ya existe en esta facultad."})
