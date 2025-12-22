@@ -33,6 +33,9 @@ class Profesor(models.Model):
     facultad = models.ForeignKey(Facultad, on_delete=models.CASCADE, related_name="profesores")
     nombre = models.CharField(max_length=255)
 
+    class Meta:
+        unique_together = ("facultad", "nombre")
+
     @property
     def promedio_calificacion(self):
         promedio = self.opiniones.aggregate(promedio=Avg('calificacion'))['promedio']

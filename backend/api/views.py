@@ -66,10 +66,18 @@ class OpinionViewSet(viewsets.ModelViewSet):
     
 
 class ProfesorViewSet(viewsets.ModelViewSet):
-    queryset = Profesor.objects.all()
     serializer_class = ProfesorSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        universidad_id = self.kwargs["universidad_id"]
+        facultad_id = self.kwargs["facultad_id"]
+
+        return Profesor.objects.filter(
+            facultad_id = facultad_id,
+            facultad_id__universidad_id = universidad_id
+        )
 
     def create(self, request, *args, **kwargs):
         user = request.user
