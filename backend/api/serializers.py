@@ -24,7 +24,12 @@ class ProfesorSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"nombre" : "Este profesor ya existe en esta facultad."})
         return data
 
-class FacultadSerializer(serializers.ModelSerializer):
+class FacultadListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facultad
+        fields = ["id", "nombre"]
+        
+class FacultadDetailSerializer(serializers.ModelSerializer):
     profesores = ProfesorSerializer(many=True, read_only=True)
     class Meta:
         model = Facultad
@@ -36,7 +41,7 @@ class UniversidadListSerializer(serializers.ModelSerializer):
         fields = ["id", "nombre", "pais", "ciudad", "imagen"]
 
 class UniversidadDetailSerializer(serializers.ModelSerializer):
-    facultades = FacultadSerializer(many=True, read_only=True)
+    facultades = FacultadListSerializer(many=True, read_only=True)
     
     class Meta:
         model = Universidad
