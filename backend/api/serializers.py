@@ -31,10 +31,16 @@ class FacultadSerializer(serializers.ModelSerializer):
         fields = ["id", "nombre", "profesores"]
 
 class UniversidadSerializer(serializers.ModelSerializer):
-    facultades = FacultadSerializer(many=True, read_only=True)
     class Meta:
         model = Universidad
-        fields = ["id", "nombre", "pais", "ciudad", "facultades", "imagen"]
+        fields = ["id", "nombre", "pais", "ciudad", "imagen"]
+
+class UniversidadDetailSerializer(serializers.ModelSerializer):
+    facultades = FacultadSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Universidad
+        fields = ["id", "nombre", "pais", "ciudad", "imagen"]
 
 class UsuarioSerializer(serializers.ModelSerializer):
     universidad = serializers.PrimaryKeyRelatedField(
