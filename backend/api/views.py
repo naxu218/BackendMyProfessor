@@ -26,7 +26,7 @@ class FacultadList(generics.ListAPIView):
     queryset = Facultad.objects.all()
     serializer_class = FacultadListSerializer
     permission_classes = [AllowAny]
-
+    
 class FacultadDetailView(generics.RetrieveAPIView):
     serializer_class = FacultadDetailSerializer
     permission_classes = [AllowAny]

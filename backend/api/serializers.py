@@ -28,7 +28,7 @@ class FacultadListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Facultad
         fields = ["id", "nombre"]
-
+        
 class FacultadDetailSerializer(serializers.ModelSerializer):
     profesores = ProfesorSerializer(many=True, read_only=True)
     class Meta:
