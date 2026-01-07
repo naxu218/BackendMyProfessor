@@ -30,7 +30,7 @@ class FacultadSerializer(serializers.ModelSerializer):
         model = Facultad
         fields = ["id", "nombre", "profesores"]
 
-class UniversidadSerializer(serializers.ModelSerializer):
+class UniversidadListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Universidad
         fields = ["id", "nombre", "pais", "ciudad", "imagen"]

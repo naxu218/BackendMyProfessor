@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from .models import CustomUser
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from .models import Universidad, Facultad, Profesor, Opinion
-from .serializers import CustomTokenObtainPairSerializer, OpinionSerializer, UniversidadSerializer, FacultadSerializer, ProfesorSerializer, UsuarioSerializer
+from .serializers import CustomTokenObtainPairSerializer, OpinionSerializer, UniversidadListSerializer, UniversidadDetailSerializer,FacultadSerializer, ProfesorSerializer, UsuarioSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -14,12 +14,12 @@ class HomeView(generics.CreateAPIView):
 
 class UniversidadList(generics.ListAPIView):
     queryset = Universidad.objects.all()
-    serializer_class = UniversidadSerializer
+    serializer_class = UniversidadListSerializer
     permission_classes = [AllowAny]
 
 class UniversidadDetailViews(generics.RetrieveAPIView):
     queryset = Universidad.objects.all()
-    serializer_class = UniversidadSerializer
+    serializer_class = UniversidadDetailSerializer
     permission_classes = [AllowAny]
 
 class FacultadList(generics.ListAPIView):
