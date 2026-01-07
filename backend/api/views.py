@@ -23,18 +23,17 @@ class UniversidadDetailViews(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
 
 class FacultadList(generics.ListAPIView):
-    queryset = Facultad.objects.all()
     serializer_class = FacultadListSerializer
-    permission_classes = [AllowAny]
-    
-class FacultadDetailView(generics.RetrieveAPIView):
-    queryset = Facultad.objects.all()
-    serializer_class = FacultadDetailSerializer
     permission_classes = [AllowAny]
     
     def get_queryset(self):
         universidad_id = self.kwargs.get('pk')
         return Facultad.objects.filter(universidad_id=universidad_id)
+    
+class FacultadDetailView(generics.RetrieveAPIView):
+    queryset = Facultad.objects.all()
+    serializer_class = FacultadDetailSerializer
+    permission_classes = [AllowAny]
 
 class ProfesorList(generics.ListAPIView):
     serializer_class = ProfesorSerializer
