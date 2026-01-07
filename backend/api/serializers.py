@@ -40,7 +40,7 @@ class UniversidadDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Universidad
-        fields = ["id", "nombre", "pais", "ciudad", "imagen"]
+        fields = ["id", "nombre", "pais", "ciudad", "facultades", "imagen"]
 
 class UsuarioSerializer(serializers.ModelSerializer):
     universidad = serializers.PrimaryKeyRelatedField(
