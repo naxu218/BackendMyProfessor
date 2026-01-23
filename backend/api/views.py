@@ -86,7 +86,7 @@ class OpinionViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
     )
 
-    def voto(self, request, profesor_id=None):
+    def voto(self, request, universidad_id=None, facultad_id= None, profesor_id=None):
         existe = Opinion.objects.filter(
             usuario = request.user,
             profesor_id = profesor_id
