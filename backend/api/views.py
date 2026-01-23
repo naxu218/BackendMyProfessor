@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from .models import CustomUser
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
@@ -54,19 +55,44 @@ class OpinionViewSet(viewsets.ModelViewSet):
     serializer_class = OpinionSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+
     def get_queryset(self):
         profesor_id = self.kwargs['profesor_id']
         return Opinion.objects.filter(profesor_id=profesor_id)
     
     def create(self, request, universidad_id=None, facultad_id=None, profesor_id=None):
         user = request.user
-        profesor = get_object_or_404(Profesor, id=profesor_id, facultad_id=facultad_id, facultad__universidad_id=universidad_id,)
+        profesor = get_object_or_404(Profesor, id=profesor_id, facultad_id=facultad_id, facultad__universidad_id=universidad_id)
+
         if user.universidad.id != int(universidad_id):
             return Response(status=status.HTTP_403_FORBIDDEN)
-        serializer = self.get_serializer(data=request.data)
+        
+        serializer = self.get_serializer(
+            data=request.data,
+            context={
+                "request": request,
+                "profesor": profesor
+            }
+        )
+
         serializer.is_valid(raise_exception=True)
         serializer.save(profesor=profesor, usuario=user)
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(
+            detail = False,
+            methods = ["get"],
+            permission_classes = [IsAuthenticated]
+    )
+
+    def voto(self, request, profesor_id=None):
+        existe = Opinion.objects.filter(
+            usuario = request.user,
+            profesor_id = profesor_id
+        ).exists()
+
+        return Response({"voto": existe})
     
 
 class ProfesorViewSet(viewsets.ModelViewSet):

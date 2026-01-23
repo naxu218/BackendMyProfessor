@@ -82,11 +82,20 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return user
 
 class OpinionSerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer(read_only=True)
-    profesor = ProfesorSerializer(read_only=True)
     class Meta:
         model = Opinion
-        fields = ["id", "usuario", "profesor", "calificacion", "comentario"]
+        fields = ["id", "calificacion", "comentario"]
+    
+    def validate(self, data):
+        user = self.context["request"].user
+        profesor = self.context["profesor"]
+
+        if Opinion.objects.filter(usuario=user, profesor=profesor).exists():
+            raise serializers.ValidationError(
+                "Ya votaste por este profesor."
+            )
+        
+        return data
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

@@ -51,5 +51,13 @@ class Opinion(models.Model):
     calificacion = models.IntegerField(choices=rango_calificacion)
     comentario = models.CharField(max_length=500)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["usuario", "profesor"],
+                name = "unique_voto_por_profesor"
+            )
+        ]
+
     def __str__(self):
         return f"{self.usuario.username} {self.profesor.nombre} ({self.calificacion}/5)"
