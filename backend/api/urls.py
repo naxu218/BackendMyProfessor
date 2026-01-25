@@ -20,5 +20,5 @@ urlpatterns = [
     path("", include(router.urls)),
     path("universidades/<int:universidadId>/facultades/<int:facultadId>/profesores/<int:pk>/", ProfesorDetail.as_view(), name="profesor-detail"),
     path("", include(router.urls)),
-    path("auth/verify-email", VerifyEmailView.as_view())
+    path("auth/verify-email/", VerifyEmailView.as_view())
 ]
