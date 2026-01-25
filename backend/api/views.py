@@ -2,11 +2,12 @@ from django.shortcuts import render
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from .models import CustomUser
+from .models import CustomUser, VerificacionEmail
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from .models import Universidad, Facultad, Profesor, Opinion
-from .serializers import CustomTokenObtainPairSerializer, OpinionSerializer, UniversidadListSerializer, UniversidadDetailSerializer, FacultadListSerializer, FacultadDetailSerializer, ProfesorSerializer, UsuarioSerializer
+from .serializers import CustomTokenObtainPairSerializer, OpinionSerializer, UniversidadListSerializer, UniversidadDetailSerializer, FacultadListSerializer, FacultadDetailSerializer, ProfesorSerializer, UsuarioSerializer, VerifyEmailSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -130,3 +131,27 @@ class CreateUserView(generics.CreateAPIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = VerifyEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        code = serializer.validated_data["code"]
+
+        user = get_object_or_404(CustomUser, email=email)
+
+        verification = get_object_or_404(
+            VerificacionEmail,
+            user=user,
+            code=code
+        )
+
+        user.is_active = True
+        user.save()
+        verification.delete()
+
+        return Response({"detail" : "Cuenta verificada correctamente"})
