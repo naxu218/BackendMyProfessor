@@ -1,6 +1,9 @@
 from rest_framework import serializers
-from .models import Facultad, Profesor, Universidad, CustomUser, Opinion
+from .models import Facultad, Profesor, Universidad, CustomUser, Opinion, VerificacionEmail
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core.mail import send_mail
+from django.conf import settings
+from .utils import generate_code
 
 class ProfesorSerializer(serializers.ModelSerializer):
     promedio_calificacion = serializers.FloatField(read_only=True)
@@ -79,6 +82,20 @@ class UsuarioSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
+        user.is_active = False
+        user.save()
+
+        code = generate_code()
+
+        VerificacionEmail.objects.create(user=user, code=code)
+
+        send_mail(
+            subject="Verifica tu cuenta - MyProfessor",
+            message=f"Tu código de verificación es: {code}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+        )
+
         return user
 
 class OpinionSerializer(serializers.ModelSerializer):
@@ -96,6 +113,10 @@ class OpinionSerializer(serializers.ModelSerializer):
             )
         
         return data
+    
+class VerifyEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

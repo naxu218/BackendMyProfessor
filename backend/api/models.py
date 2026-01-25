@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Avg
+import uuid
+from django.conf import settings
 
 class Universidad(models.Model):
     nombre = models.CharField(max_length=255)
@@ -61,3 +63,16 @@ class Opinion(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} {self.profesor.nombre} ({self.calificacion}/5)"
+
+
+class VerificacionEmail(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="email_verification"
+    )
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.code}"
