@@ -160,3 +160,12 @@ CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = ["*"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "codegeniousdev@gmail.com"
+EMAIL_HOST_PASSWORD = "fcmy wpue ywtl znht"
+DEFAULT_FROM_EMAIL = "MyProfessor"
