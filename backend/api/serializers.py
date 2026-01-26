@@ -95,6 +95,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
                 message=f"Tu código de verificación es: {code}",
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
+                fail_silently=False
             )
         except Exception as e:
             print("Error en envio de email: ", e)
