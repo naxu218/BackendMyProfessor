@@ -89,12 +89,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         VerificacionEmail.objects.create(user=user, code=code)
 
-        send_mail(
-            subject="Verifica tu cuenta - MyProfessor",
-            message=f"Tu código de verificación es: {code}",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-        )
+        try:
+            send_mail(
+                subject="Verifica tu cuenta - MyProfessor",
+                message=f"Tu código de verificación es: {code}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+            )
+        except Exception as e:
+            print("Error en envio de email: ", e)
 
         return user
 

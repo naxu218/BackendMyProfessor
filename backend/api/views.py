@@ -142,13 +142,14 @@ class VerifyEmailView(APIView):
         email = serializer.validated_data["email"]
         code = serializer.validated_data["code"]
 
-        user = get_object_or_404(CustomUser, email=email)
-
-        verification = get_object_or_404(
-            VerificacionEmail,
-            user=user,
-            code=code
-        )
+        try:
+            user = CustomUser.objects.get(email=email)
+            verification = VerificacionEmail.objects.get(user=user, code=code)
+        except (CustomUser.DoesNotExist, VerificacionEmail.DoesNotExist):
+            return Response(
+                {"detail" : "Codigo invalido o expirado"},
+                status = status.HTTP_400_BAD_REQUEST
+            )
 
         user.is_active = True
         user.save()
