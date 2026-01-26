@@ -167,5 +167,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "codegeniousdev@gmail.com"
-EMAIL_HOST_PASSWORD = "fcmy wpue ywtl znht"
+EMAIL_HOST_PASSWORD = "fcmywpueywtlznht"
 DEFAULT_FROM_EMAIL = "MyProfessor"
